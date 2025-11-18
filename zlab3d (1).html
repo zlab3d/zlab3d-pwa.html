@@ -1911,17 +1911,17 @@
     }
   }
 
-  if ('serviceWorker' in navigator) {
-    const swCode = `
-      const CACHE_NAME='zlab-pwa-v1';
-      self.addEventListener('install',e=>{
-        e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll([self.location.pathname])));
-        self.skipWaiting();
-      });
-      self.addEventListener('activate',e=>{
-        e.waitUntil(
-          caches.keys().then(keys=>Promise.all(
-            keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k))
+  if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+  navigator.serviceWorker.register(swUrl)
+    .then(reg => {
+      console.log('ServiceWorker registrado:', reg);
+    })
+    .catch(err => {
+      console.error('Erro ao registrar ServiceWorker:', err);
+    });
+} else {
+  console.log('ServiceWorker não registrado porque está rodando via', window.location.protocol);
+}
           ))
         );
         self.clients.claim();
